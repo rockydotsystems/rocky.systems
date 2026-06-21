@@ -1,0 +1,5 @@
+name = "rocky-systems"
+compatibility_date = "2026-06-21"
+
+[assets]
+directory = "./dist"
