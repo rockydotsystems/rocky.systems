@@ -18,12 +18,25 @@ const links = [
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: light dark;
         font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --color-bg: #121212;
         --color-text-primary: #f5f2ea;
         --color-link-underline: #737373;
-        background: #121212;
+        --color-mountain-line: #aaa59a;
+        --color-mountain-hatch: rgb(245 242 234 / 0.14);
+        background: var(--color-bg);
         color: var(--color-text-primary);
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --color-bg: #f4f1e9;
+          --color-text-primary: #1b1a17;
+          --color-link-underline: #9a958a;
+          --color-mountain-line: #5c5850;
+          --color-mountain-hatch: rgb(27 26 23 / 0.12);
+        }
       }
 
       * {
@@ -34,7 +47,7 @@ const links = [
         min-height: 100vh;
         margin: 0;
         overflow: hidden;
-        background: #121212;
+        background: var(--color-bg);
       }
 
       main {
@@ -170,6 +183,10 @@ const links = [
       const drawMountains = () => {
         if (!canvas || !context) return
 
+        const styles = getComputedStyle(document.documentElement)
+        const hatchColor = styles.getPropertyValue('--color-mountain-hatch').trim()
+        const lineColor = styles.getPropertyValue('--color-mountain-line').trim()
+
         const { width, height } = canvas.getBoundingClientRect()
         const ratio = window.devicePixelRatio || 1
 
@@ -218,7 +235,7 @@ const links = [
         context.clip()
 
         context.beginPath()
-        context.strokeStyle = 'rgb(245 242 234 / 0.14)'
+        context.strokeStyle = hatchColor
         context.lineWidth = 1
 
         for (let x = -height; x < width + height; x += 6) {
@@ -236,7 +253,7 @@ const links = [
           context.lineTo(points[index].x, points[index].y)
         }
 
-        context.strokeStyle = '#aaa59a'
+        context.strokeStyle = lineColor
         context.lineWidth = 1
         context.lineCap = 'square'
         context.lineJoin = 'miter'
@@ -245,6 +262,7 @@ const links = [
 
       drawMountains()
       window.addEventListener('resize', drawMountains)
+      window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', drawMountains)
     </script>
   </body>
 </html>
