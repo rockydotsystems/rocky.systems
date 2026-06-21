@@ -179,8 +179,13 @@ const links = [
         context.imageSmoothingEnabled = false
         context.clearRect(0, 0, width, height)
 
+        const mobileReferenceWidth = 375
+        const mobilePeakCount = 8
         const points = [{ x: 0, y: height * (0.72 + random() * 0.16) }]
-        const peakCount = Math.max(8, Math.round(width / 150))
+        const peakCount = Math.max(
+          mobilePeakCount,
+          Math.round((width * mobilePeakCount) / mobileReferenceWidth),
+        )
 
         for (let index = 0; index < peakCount; index += 1) {
           const center = (index / (peakCount - 1)) * width + (random() - 0.5) * 54
