@@ -1,0 +1,245 @@
+---
+const links = [
+  { href: 'https://github.com/rockydotsystems', label: 'github' },
+  { href: 'mailto:hello@rocky.systems', label: 'email' }
+]
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="description" content="rocky.systems is a software lab based in Alberta, next to the Rocky Mountains." />
+    <title>rocky.systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --color-text-primary: #f5f2ea;
+        --color-link-underline: #737373;
+        background: #121212;
+        color: var(--color-text-primary);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        background: #121212;
+      }
+
+      main {
+        display: grid;
+        min-height: 100vh;
+        grid-template-rows: auto 1fr auto;
+        padding: clamp(2rem, 6vw, 7rem) clamp(2rem, 6vw, 7rem) calc(clamp(2rem, 6vw, 7rem) + 100px);
+        position: relative;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand img {
+        width: 2rem;
+        height: 2rem;
+        display: block;
+      }
+
+      .wordmark {
+        margin: 0;
+        font-size: clamp(1.1rem, 1.5vw, 1.55rem);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+      }
+
+      p {
+        margin: 0;
+        max-width: 36rem;
+        font-size: clamp(1.45rem, 2.1vw, 2.35rem);
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 1.32;
+      }
+
+      p a {
+        font-size: inherit;
+        letter-spacing: inherit;
+      }
+
+      .content {
+        align-self: end;
+        z-index: 1;
+        padding-bottom: clamp(3rem, 9vh, 8rem);
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.4rem 2.4rem;
+        z-index: 1;
+      }
+
+      a {
+        color: var(--color-text-primary);
+        font-size: clamp(1rem, 1.35vw, 1.45rem);
+        letter-spacing: -0.03em;
+        text-decoration-line: underline;
+        text-decoration-color: var(--color-link-underline);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
+      }
+
+      a:hover {
+        text-decoration-color: var(--color-text-primary);
+        background-image: repeating-linear-gradient(
+          -60deg,
+          color-mix(in srgb, var(--color-text-primary) 14%, transparent) 0,
+          color-mix(in srgb, var(--color-text-primary) 14%, transparent) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      }
+
+      .mountains {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        opacity: 1;
+        z-index: 0;
+      }
+
+      @media (max-width: 760px) {
+        body {
+          overflow: auto;
+        }
+
+        main {
+          padding: 2rem 2rem calc(2rem + 100px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand" aria-label="rocky.systems">
+        <img src="/rocky-systems-logo.png" alt="" width="64" height="64" />
+        <h1 class="wordmark">rocky.systems</h1>
+      </div>
+
+      <section class="content" aria-label="Introduction">
+        <p>
+          A group of friends building tools next to the Rockies. We make fun and helpful software in our free time. Currently:{' '}
+          <a href="https://peep.codes">peep.codes</a>, a code review bot you shape your way.
+        </p>
+      </section>
+
+      <nav aria-label="Links">
+        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </nav>
+
+      <canvas class="mountains" aria-hidden="true"></canvas>
+    </main>
+
+    <script>
+      const canvas = document.querySelector('.mountains')
+      const context = canvas?.getContext('2d')
+
+      let seed = Math.floor(Math.random() * 4294967296)
+      const random = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296
+        return seed / 4294967296
+      }
+
+      const drawMountains = () => {
+        if (!canvas || !context) return
+
+        const { width, height } = canvas.getBoundingClientRect()
+        const ratio = window.devicePixelRatio || 1
+
+        canvas.width = Math.floor(width * ratio)
+        canvas.height = Math.floor(height * ratio)
+        context.setTransform(ratio, 0, 0, ratio, 0, 0)
+        context.imageSmoothingEnabled = false
+        context.clearRect(0, 0, width, height)
+
+        const points = [{ x: 0, y: height * (0.72 + random() * 0.16) }]
+        const peakCount = Math.max(8, Math.round(width / 150))
+
+        for (let index = 0; index < peakCount; index += 1) {
+          const center = (index / (peakCount - 1)) * width + (random() - 0.5) * 54
+          const span = 58 + random() * 112
+          const peakY = height * (0.1 + random() * 0.4)
+          const baseY = height * (0.66 + random() * 0.22)
+          const leftX = center - span * (0.42 + random() * 0.22)
+          const rightX = center + span * (0.42 + random() * 0.22)
+
+          points.push(
+            { x: leftX, y: baseY + (random() - 0.5) * height * 0.12 },
+            { x: center, y: peakY },
+            { x: rightX, y: baseY + (random() - 0.5) * height * 0.12 },
+          )
+        }
+
+        points.push({ x: width, y: height * (0.72 + random() * 0.16) })
+
+        context.beginPath()
+        context.moveTo(points[0].x, points[0].y)
+
+        for (let index = 1; index < points.length; index += 1) {
+          context.lineTo(points[index].x, points[index].y)
+        }
+
+        context.save()
+        context.lineTo(width, height)
+        context.lineTo(0, height)
+        context.closePath()
+        context.clip()
+
+        context.beginPath()
+        context.strokeStyle = 'rgb(245 242 234 / 0.14)'
+        context.lineWidth = 1
+
+        for (let x = -height; x < width + height; x += 6) {
+          context.moveTo(x, height)
+          context.lineTo(x + height * 0.58, 0)
+        }
+
+        context.stroke()
+        context.restore()
+
+        context.beginPath()
+        context.moveTo(points[0].x, points[0].y)
+
+        for (let index = 1; index < points.length; index += 1) {
+          context.lineTo(points[index].x, points[index].y)
+        }
+
+        context.strokeStyle = '#aaa59a'
+        context.lineWidth = 1
+        context.lineCap = 'square'
+        context.lineJoin = 'miter'
+        context.stroke()
+      }
+
+      drawMountains()
+      window.addEventListener('resize', drawMountains)
+    </script>
+  </body>
+</html>
